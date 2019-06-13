@@ -81,9 +81,9 @@ class DatabaseHelper{
 
    await db.execute('CREATE TABLE $mineralItemTable('
       '$mineralItemId INTEGER PRIMARY KEY AUTOINCREMENT,$mineralItemItemId INTEGER,'
-         '$mineralItemMineralId INTEGER,$mineralItemMineralQuantity INTEGER,$mineralItemUnitId INTEGER'
-        'FOREIGN KEY($mineralItemMineralId) REFERENCES $mineralTable($mineralId))'
-        'FOREIGN KEY($mineralItemUnitId) REFERENCES $unitTable($unitId))'
+         '$mineralItemMineralId INTEGER,$mineralItemMineralQuantity INTEGER,$mineralItemUnitId INTEGER,'
+        'FOREIGN KEY($mineralItemMineralId) REFERENCES $mineralTable($mineralId),'
+        'FOREIGN KEY($mineralItemUnitId) REFERENCES $unitTable($unitId),'
         'FOREIGN KEY($mineralItemItemId) REFERENCES $itemTable($itemId))');    
   }
 

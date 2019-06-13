@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:login_demo/models/item.dart';
 import 'package:login_demo/screens/add_edit/add_item/add_item.dart';
+import 'package:login_demo/screens/add_edit/add_mineral_item/add_mineral_item.dart';
 import 'package:login_demo/utils/item_database_helper.dart';
 
 class ItemList extends StatefulWidget{
@@ -65,7 +66,7 @@ class ItemListState extends State<ItemList>{
               },
               child :  Icon(Icons.delete)),
               onTap: (){
-                navigateToNextScreen(itemList[position],'Edit Note');
+                navigateToAddMineralItemScreen(itemList[position],'Edit Note');
               },
             ),
           );
@@ -80,6 +81,12 @@ class ItemListState extends State<ItemList>{
   if(result == true) updateListView();
   }
 
+void navigateToAddMineralItemScreen(Item item,String title) async{
+  bool result = await Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return AddMineralItem(item,title);
+                }));
+  if(result == true) updateListView();
+  }
 
   Color getPriorityColor(int priority){
     switch (priority) {

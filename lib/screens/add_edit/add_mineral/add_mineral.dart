@@ -27,18 +27,17 @@ class _AddMineralState extends State<AddMineral>{
   TextEditingController mineralDailyIntakeController = TextEditingController();
   MineralDatabaseHelper mineralDatabaseHelper = MineralDatabaseHelper(); 
   UnitDatabaseHelper unitDatabaseHelper = UnitDatabaseHelper();
-
-  _AddMineralState(this.mineral,this.title);
-
-  var _units = ['milligrams' , 'micrograms'];
   String selected;
+
+  _AddMineralState(this.mineral,this.title){
+        getUnitList();
+  }
 
   @override
   Widget build(BuildContext context) {
     mineralDailyIntakeController.text = mineral.dailyIntake;
     mineralNameController.text = mineral.name;
     TextStyle textStyle = Theme.of(context).textTheme.subhead;
-    getUnitList();
     return Scaffold(
       appBar: AppBar(
         title: Text(

@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:login_demo/models/item.dart';
 import 'package:login_demo/models/mineral_item.dart';
 import 'package:login_demo/models_with_obj/mineral_item_dto.dart';
@@ -33,26 +34,28 @@ factory MineralItemDatabaseHelper(){
 
 
 
-  Future<List<Map<String, dynamic>>> getNoteListMap() async{
+  Future<List<Map<String, dynamic>>> getNoteListMap(int itemId) async{
     Database db = await _databaseHelper.database;
-    var result = await db.query(mineralItemTable,orderBy: '$mineralItemId ASC');
+    var result = await db.rawQuery("SELECT * FROM $mineralItemTable WHERE $mineralItemItemId == $itemId ORDER BY $mineralItemId");
     return result;
   }
 
   Future<int> insertNote(MineralItem note) async{
-      Database db = await _databaseHelper.database;;
+      Database db = await _databaseHelper.database;
       var result = await db.insert(mineralItemTable, note.toMap());
       return result;
   }
 
   Future<int> updateNote(MineralItem note) async{
-      Database db = await _databaseHelper.database;;
+      Database db = await _databaseHelper.database;
+      debugPrint('${note.toMap()}');
       var result = await db.update(mineralItemTable, note.toMap(),where: '$mineralItemId = ?', whereArgs: [note.id]);
+      debugPrint('$result');
       return result;
   }
 
     Future<int> deleteNote(int id) async{
-      Database db = await _databaseHelper.database;;
+      Database db = await _databaseHelper.database;
       var result = await db.rawDelete('DELETE FROM $mineralItemTable WHERE $mineralItemId = $id');
       return result;
   }
@@ -64,8 +67,8 @@ factory MineralItemDatabaseHelper(){
       return notesLength;
   }
 
-  Future<List<MineralItem>> getNoteList() async{
-    var noteMapList = await getNoteListMap();
+  Future<List<MineralItem>> getNoteList(int itemId) async{
+    var noteMapList = await getNoteListMap(itemId);
     int count = noteMapList.length;
     List<MineralItem> noteList = List<MineralItem>();
 
@@ -76,8 +79,8 @@ factory MineralItemDatabaseHelper(){
     return noteList;
   }
 
-  Future<List<MineralItemWithObj>> getMineralItemListWithObj() async{
-    List<MineralItem> listOfMineralItem = await getNoteList();  
+  Future<List<MineralItemWithObj>> getMineralItemListWithObj(int itemId) async{
+    List<MineralItem> listOfMineralItem = await getNoteList(itemId);  
     List<MineralItemWithObj> listOfMineralItemWithObj = List<MineralItemWithObj>();
     for(int i=0;i<listOfMineralItem.length ; i++){
           listOfMineralItemWithObj.add(MineralItemWithObj.withId(
@@ -92,25 +95,27 @@ factory MineralItemDatabaseHelper(){
     return listOfMineralItemWithObj;
   }
 
-  Future<void> saveMineralItemObj(MineralItemWithObj mineralItemWithObj){
+  saveMineralItemObj(MineralItemWithObj mineralItemWithObj){
     if(mineralItemWithObj != null){
-      updateNote(MineralItem(mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
+        updateNote(MineralItem.withId(mineralItemWithObj.id,mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
         mineralItemWithObj.quantity,mineralItemWithObj.unit.id));
     }
     else{
-    insertNote(MineralItem.withId(mineralItemWithObj.id,mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
+       insertNote(MineralItem(mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
         mineralItemWithObj.quantity,mineralItemWithObj.unit.id));
     }
   }
-Future<void> saveMineralItemObjList(List<MineralItemWithObj> mineralItemWithObj){
+  saveMineralItemObjList(List<MineralItemWithObj> mineralItemWithObj){
+
     for(int i=0;i<mineralItemWithObj.length ; i++)
     {
       if(mineralItemWithObj[i].id != null){
-      updateNote(MineralItem(mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
+        debugPrint('update');
+      updateNote(MineralItem.withId(mineralItemWithObj[i].id,mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
         mineralItemWithObj[i].quantity,mineralItemWithObj[i].unit.id));  
       } 
       else{
-      insertNote(MineralItem.withId(mineralItemWithObj[i].id,mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
+      insertNote(MineralItem(mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
         mineralItemWithObj[i].quantity,mineralItemWithObj[i].unit.id));
       }
     }

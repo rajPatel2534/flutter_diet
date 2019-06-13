@@ -24,7 +24,6 @@ class AddMineralItem extends StatefulWidget{
 class _AddMineralItemState extends State<AddMineralItem>{
 
   Item item;
-  MineralItemWithObj mineralItemWithObj;
   String title;
   List<Unit> unitList = List();
   List<Mineral> mineralList = List();
@@ -36,18 +35,24 @@ class _AddMineralItemState extends State<AddMineralItem>{
   UnitDatabaseHelper unitDatabaseHelper = UnitDatabaseHelper();
   MineralItemDatabaseHelper mineralItemDatabaseHelper = MineralItemDatabaseHelper();
 
-  _AddMineralItemState(this.item,this.title);
+  _AddMineralItemState(this.item,this.title){
+  
+        getUnitList();
+    getMineralList();
+    getListOfMineralItemWithObj();
+  }
 
   var _units = ['milligrams' , 'micrograms'];
   String selected;
+  List<String> selectedUnits = List<String>();
+  List<String> selectedMinerals = List<String>();
 
   @override
   Widget build(BuildContext context) {
     // mineralDailyIntakeController.text = item.dailyIntake;
     // mineralNameController.text = mineral.name;
-    mineralItemWithObj.item = item;
     TextStyle textStyle = Theme.of(context).textTheme.subhead;
-    getUnitList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -56,10 +61,18 @@ class _AddMineralItemState extends State<AddMineralItem>{
       ),
       body: Container(
         padding: EdgeInsets.all(5.0),
-        child:Column(
+        child:ListView(
           children: <Widget>[
 
-        
+        Padding(
+          padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+          child: RaisedButton(
+            onPressed: (){
+              addMineralChild();
+            },
+            child: Text('Add Mineral'),
+          ),
+        ),
         
         Padding(
           padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
@@ -110,6 +123,8 @@ class _AddMineralItemState extends State<AddMineralItem>{
     TextStyle textStyle = Theme.of(context).textTheme.subhead;
 
     return ListView.builder(
+      shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
       itemCount: listOfMineralItemObj.length,
       itemBuilder: (BuildContext context, int position){
         return Card(
@@ -126,6 +141,10 @@ class _AddMineralItemState extends State<AddMineralItem>{
               )
               ),
               controller: quantityController[position],
+              onChanged: (value){
+                debugPrint('changed');
+                updateQuantity(position);
+              },
             ),
             subtitle: Row(
               children: <Widget>[
@@ -136,14 +155,14 @@ class _AddMineralItemState extends State<AddMineralItem>{
                 child: Text(dropDownItem.name),
               );
             }).toList(),
-
+            hint: Text('Select Mineral'),
             style: textStyle,
-            value: selected,
+            value: selectedMinerals[position],
             onChanged: (valueSelected){
               setState(() {
                 debugPrint('$valueSelected selected');
                 // updatePriorityAsInt(valueSelected);
-                updateSelectedUnit(valueSelected);
+                updateSelectedMineral(valueSelected,position);
               });
             },
           ),
@@ -154,21 +173,28 @@ class _AddMineralItemState extends State<AddMineralItem>{
                 child: Text(dropDownItem.name),
               );
             }).toList(),
-
+            hint: Text('Select Unit'),
             style: textStyle,
-            value: selected,
+            value: selectedUnits[position],
             onChanged: (valueSelected){
               setState(() {
                 debugPrint('$valueSelected selected');
                 // updatePriorityAsInt(valueSelected);
-                updateSelectedUnit(valueSelected);
+                updateSelectedUnit(valueSelected,position);
               });
             },
           )
               ],
             ),
-          ),
-        );
+            trailing: GestureDetector(
+              child: Icon(Icons.delete_outline),
+              onTap: (){
+                deleteMineralItemObjFromList(position);
+              },
+            ),
+
+            )
+          );
       },
     );
   }
@@ -177,10 +203,7 @@ class _AddMineralItemState extends State<AddMineralItem>{
     Future<List<Unit>> itemListFuture = unitDatabaseHelper.getNoteList();
         itemListFuture.then((itemList){
           setState(() {
-            debugPrint('${itemList[0].id}');
             this.unitList = itemList;
-            // this.selected = getUnitById(mineral.unitId);
-            // this.count = itemList.length;
           });
         });
   }
@@ -189,64 +212,90 @@ class _AddMineralItemState extends State<AddMineralItem>{
     Future<List<Mineral>> mineralListFuture = mineralDatabaseHelper.getNoteList();
         mineralListFuture.then((mineralList){
           setState(() {
-            debugPrint('${mineralList[0].id}');
             this.mineralList = mineralList;
-            // this.selected = getUnitById(mineral.unitId);
-            // this.count = itemList.length;
           });
         });
   }
 
-  void updateName(){
-    // mineral.name = mineralNameController.text;
+   void getListOfMineralItemWithObj(){
+    Future<List<MineralItemWithObj>> mineralListFuture = mineralItemDatabaseHelper.getMineralItemListWithObj(item.id);
+        mineralListFuture.then((mineralListFuture){
+          setState(() {
+            listOfMineralItemObj = mineralListFuture;
+            for(int i=0;i < listOfMineralItemObj.length ;i++){
+              quantityController.add(TextEditingController(text: '${listOfMineralItemObj[i].quantity}'));
+              selectedMinerals.add('${listOfMineralItemObj[i].mineral.name}');
+              selectedUnits.add('${listOfMineralItemObj[i].unit.name}');
+            }
+          });
+        });
   }
 
-  void updateIntake(){
-    // mineral.dailyIntake = mineralDailyIntakeController.text;
+  void addMineralChild(){
+    setState(() {
+      this.listOfMineralItemObj.add(MineralItemWithObj(Mineral('', '0',null),item,0,Unit('')));
+      quantityController.add(TextEditingController());
+      selectedMinerals.add(null);
+      selectedUnits.add(null);
+
+    });
+  }
+
+  void deleteMineralItemObjFromList(int position) async{
+    int result  = await mineralItemDatabaseHelper.deleteNote(listOfMineralItemObj[position].id);
+    if(result == 1){
+      _showAlertDialog('Status', 'Mineral Deleted Successfully');
+       setState(() {
+        listOfMineralItemObj.removeAt(position);
+        quantityController.removeAt(position);
+        selectedMinerals.removeAt(position);
+        selectedUnits.removeAt(position);      
+      });
+    }
+  }
+
+  void updateQuantity(int position){
+    listOfMineralItemObj[position].quantity = int.parse(quantityController[position].text) ;
   }
   
-  String getUnitById(int id){
-    Unit unit = unitList.firstWhere((unit) => unit.id == id, orElse:() => null);
-    if(unit != null) return unit.name; 
-    else 
-    {
-      // mineral.unitId = unitList[0].id;
-      return unitList[0].name;
-  
-  }}
-
-  void updateSelectedUnit(String valueSelected){
+  void updateSelectedUnit(String valueSelected,position){
     Unit unit = unitList.firstWhere((unit) => unit.name == valueSelected, orElse: null);
     // mineral.unitId = unit.id;
-    this.selected = valueSelected;
+    this.selectedUnits[position] = valueSelected;
+    this.listOfMineralItemObj[position].unit = unit;
+
   }
+
+  void updateSelectedMineral(String valueSelected,position){
+    Mineral mineral = mineralList.firstWhere((unit) => unit.name == valueSelected, orElse: null);
+    // mineral.unitId = unit.id;
+    this.selectedMinerals[position] = valueSelected;
+    this.listOfMineralItemObj[position].mineral = mineral;
+  }
+
 
   void _save() async{
     var result;
-  // if(item.id != null){
-  //   result =  await mineralDatabaseHelper.updateNote(item);
-  //   }
-  //   else{
-  //        result =  await mineralDatabaseHelper.insertNote(item);
-  //   }
-
-
+    mineralItemDatabaseHelper.saveMineralItemObjList(listOfMineralItemObj);
     if(result != 0) {
       moveToLastScreen(); 
       _showAlertDialog('Status','Note Saved Succesfully');
     }
     else _showAlertDialog('Status', 'Problem Saving Note');
+
+    
   }
 
   void _delete() async{
-    moveToLastScreen();
-    if(item.id == null){
-       _showAlertDialog('Status','No Note was Deleted');
-      return;
+
+    bool result = true;
+    for(int i=0;i< this.listOfMineralItemObj.length ; i++){
+      int res = await mineralItemDatabaseHelper.deleteNote(this.listOfMineralItemObj[i].id);
+      if(res != -1) result = false;
     }
-    int result = await mineralDatabaseHelper.deleteNote(item.id);
-    if(result != 0) _showAlertDialog('Status', 'Note Deleted Successfully');
-    else _showAlertDialog('Status', 'Error occured while deleting note');
+    moveToLastScreen();
+    if(result != false) _showAlertDialog('Status', 'Item Deleted Successfully');
+    else _showAlertDialog('Status', 'Error occured while deleting Item');
   }
 
   void _showAlertDialog(String title, String message) {
