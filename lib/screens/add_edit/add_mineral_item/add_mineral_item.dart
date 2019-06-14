@@ -26,7 +26,9 @@ class _AddMineralItemState extends State<AddMineralItem> {
   List<Mineral> mineralList = List();
 
   List<MineralItemWithObj> listOfMineralItemObj = List<MineralItemWithObj>();
-  List<TextEditingController> quantityController =
+  List<TextEditingController> mineralQuantityController =
+      List<TextEditingController>();
+  List<TextEditingController> itemQuantityController =
       List<TextEditingController>();
   // TextEditingController mineralDailyIntakeController = TextEditingController();
   MineralDatabaseHelper mineralDatabaseHelper = MineralDatabaseHelper();
@@ -43,8 +45,9 @@ class _AddMineralItemState extends State<AddMineralItem> {
 
   var _units = ['milligrams', 'micrograms'];
   String selected;
-  List<String> selectedUnits = List<String>();
+  List<String> selectedItemUnits = List<String>();
   List<String> selectedMinerals = List<String>();
+  List<String> selectedMineralUnits = List<String>();
 
   @override
   Widget build(BuildContext context) {
@@ -54,21 +57,77 @@ class _AddMineralItemState extends State<AddMineralItem> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: Text(title),
       ),
       body: Container(
         padding: EdgeInsets.all(5.0),
         child: ListView(
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-              child: RaisedButton(
-                onPressed: () {
-                  addMineralChild();
-                },
-                child: Text('Add Mineral'),
+            Container(
+              padding: EdgeInsets.only(top: 5.0),
+              child: Row(
+                
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+              children : <Widget>[
+                GestureDetector(
+                child : Container(
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    border: Border.all(color : Colors.green)
+                  ),
+                  padding: EdgeInsets.all(5.0),
+                  child :Row(
+                    children : <Widget>[
+                      Text('Add Mineral',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0
+                      ),
+                  ),
+                  GestureDetector(
+                  child : Icon(Icons.add_box,
+                  color: Colors.white,
+                  size: 30.0,
+                  ),
+                  
+                  )
+                    ]
+                  )),
+                  onTap: (){
+                     addMineralChild();
+                  }
+                  ),
+              
+              //  GestureDetector(
+              //   child :Icon(Icons.add_box,
+              // color: Colors.green,
+              // size: 42.0,
+              // semanticLabel:'Add Mineral',
+              
+              // ),
+              // onTap: (){
+              //   debugPrint('called');
+              //   addMineralChild();
+              // },
+              // )
+              ])
+              
               ),
-            ),
+            
+            // Padding(
+            //   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+            //   child: RaisedButton(
+            //     color: Colors.green,
+            //     textColor: Colors.white,
+            //     onPressed: () {
+            //       addMineralChild();
+            //     },
+            //     child: Text('Add Mineral'),
+            //   ),
+            // ),
             Padding(
               padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
               child: getMineralsListView(),
@@ -77,9 +136,25 @@ class _AddMineralItemState extends State<AddMineralItem> {
               padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
               child: Row(
                 children: <Widget>[
-                  Expanded(
+                 Expanded(
                     child: RaisedButton(
-                      color: Colors.blue,
+                      color: Colors.redAccent,
+                      textColor: Colors.white,
+                      child: Text(
+                        'Delete',
+                        textScaleFactor: 1.5,
+                      ),
+                      onPressed: () {
+                        _delete();
+                      },
+                    ),
+                  ),
+                  Container(
+                    width: 5.0,
+                  ),
+                   Expanded(
+                    child: RaisedButton(
+                      color: Colors.green,
                       textColor: Colors.white,
                       child: Text(
                         'Save',
@@ -90,22 +165,7 @@ class _AddMineralItemState extends State<AddMineralItem> {
                       },
                     ),
                   ),
-                  Container(
-                    width: 5.0,
-                  ),
-                  Expanded(
-                    child: RaisedButton(
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      child: Text(
-                        'Delete',
-                        textScaleFactor: 1.5,
-                      ),
-                      onPressed: () {
-                        _delete();
-                      },
-                    ),
-                  )
+                  
                 ],
               ),
             )
@@ -127,23 +187,67 @@ class _AddMineralItemState extends State<AddMineralItem> {
             color: Colors.white,
             elevation: 2.0,
             child: ListTile(
-              leading: Text(listOfMineralItemObj[position].mineral.name),
-              title: TextField(
-                decoration: InputDecoration(
-                    labelText: 'Quantity',
-                    labelStyle: textStyle,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0))),
-                controller: quantityController[position],
-                onChanged: (value) {
-                  debugPrint('changed');
-                  updateQuantity(position);
-                },
+              // leading: Text(listOfMineralItemObj[position].mineral.name),
+              title: Container(
+                decoration: BoxDecoration(
+                   color: Colors.blue[50],
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                   border : Border.all(color: Colors.grey[50])
+                ),
+                padding: EdgeInsets.all(5.0),
+                  margin: EdgeInsets.only(bottom: 5.0, top: 2.0),
+                  child: Row(
+                    children: <Widget>[
+                      Flexible(
+                          flex: 2,
+                          child: TextField(
+                            decoration: InputDecoration(
+                                labelText: 'Quantity of item',
+                                labelStyle: textStyle,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0))),
+                            controller: itemQuantityController[position],
+                            onChanged: (value) {
+                              debugPrint('changed');
+                              updateItemQuantity(position);
+                            },
+                          )),
+                      Container(
+                        width: 5.0,
+                      ),
+                      Flexible(
+                          flex: 1,
+                          child: DropdownButton(
+                            isExpanded: true,
+                            items: unitList.map((dropDownItem) {
+                              return DropdownMenuItem<String>(
+                                value: dropDownItem.name,
+                                child: Text(dropDownItem.name),
+                              );
+                            }).toList(),
+                            hint: Text('Unit'),
+                            style: textStyle,
+                            value: selectedItemUnits[position],
+                            onChanged: (valueSelected) {
+                              setState(() {
+                                debugPrint('$valueSelected selected');
+                                // updatePriorityAsInt(valueSelected);
+                                updateSelectedItemUnit(valueSelected, position);
+                              });
+                            },
+                          ))
+                    ],
+                  )),
+              subtitle: Container(
+              padding: EdgeInsets.all(5.0),
+              decoration: BoxDecoration(
+                color: Colors.green[50],
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                // border: Colors.white
               ),
-              subtitle:  Row(
+              child :Column(
                 children: <Widget>[
-    
-            DropdownButton(
+                  DropdownButton(
                     items: mineralList.map((dropDownItem) {
                       return DropdownMenuItem<String>(
                         value: dropDownItem.name,
@@ -161,33 +265,62 @@ class _AddMineralItemState extends State<AddMineralItem> {
                       });
                     },
                   ),
-                 
-                    
-             Flexible(     
-            child :  DropdownButton(
-              isExpanded: true,
-                    items: unitList.map((dropDownItem) {
-                      return DropdownMenuItem<String>(
-                        value: dropDownItem.name,
-                        child: Text(dropDownItem.name),
-                      );
-                    }).toList(),
-                    hint: Text('Unit'),
-                    style: textStyle,
-                    value: selectedUnits[position],
-                    onChanged: (valueSelected) {
-                      setState(() {
-                        debugPrint('$valueSelected selected');
-                        // updatePriorityAsInt(valueSelected);
-                        updateSelectedUnit(valueSelected, position);
-                      });
-                    },
-                  )
-                  )
+                  Row(children: <Widget>[
+                    Flexible(
+                        flex: 2,
+                        child: TextField(
+                          decoration: InputDecoration(
+                              labelText: 'Quantity of Mineral',
+                              labelStyle: textStyle,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5.0))),
+                          controller: mineralQuantityController[position],
+                          onChanged: (value) {
+                            debugPrint('changed');
+                            updateMineralQuantity(position);
+                          },
+                        )),
+                    Container(
+                      width: 5.0,
+                    ),
+                    Flexible(
+                        flex: 1,
+                        child: DropdownButton(
+                          isExpanded: true,
+                          items: unitList.map((dropDownItem) {
+                            return DropdownMenuItem<String>(
+                              value: dropDownItem.name,
+                              child: Text(dropDownItem.name),
+                            );
+                          }).toList(),
+                          hint: Text('Unit'),
+                          style: textStyle,
+                          value: selectedMineralUnits[position],
+                          onChanged: (valueSelected) {
+                            setState(() {
+                              debugPrint('$valueSelected selected');
+                              // updatePriorityAsInt(valueSelected);
+                              updateSelectedMineralUnit(
+                                  valueSelected, position);
+                            });
+                          },
+                        ))
+                  ])
                 ],
-              ),
+              )),
               trailing: GestureDetector(
-                child: Icon(Icons.delete_outline),
+                child:
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        border: Border.all(color: Colors.white)
+                      ),
+                      child: Icon(
+                        Icons.delete_outline,
+                        size: 30.0,
+                        color: Colors.white,
+                        )),
                 onTap: () {
                   deleteMineralItemObjFromList(position);
                 },
@@ -223,10 +356,14 @@ class _AddMineralItemState extends State<AddMineralItem> {
       setState(() {
         listOfMineralItemObj = mineralListFuture;
         for (int i = 0; i < listOfMineralItemObj.length; i++) {
-          quantityController.add(TextEditingController(
-              text: '${listOfMineralItemObj[i].quantity}'));
+          mineralQuantityController.add(TextEditingController(
+              text: '${listOfMineralItemObj[i].mineralQuantity}'));
+          itemQuantityController.add(TextEditingController(
+              text: '${listOfMineralItemObj[i].itemQuantity}'));
           selectedMinerals.add('${listOfMineralItemObj[i].mineral.name}');
-          selectedUnits.add('${listOfMineralItemObj[i].unit.name}');
+          selectedMineralUnits
+              .add('${listOfMineralItemObj[i].mineralUnit.name}');
+          selectedItemUnits.add('${listOfMineralItemObj[i].itemUnit.name}');
         }
       });
     });
@@ -234,12 +371,13 @@ class _AddMineralItemState extends State<AddMineralItem> {
 
   void addMineralChild() {
     setState(() {
-      this
-          .listOfMineralItemObj
-          .add(MineralItemWithObj(Mineral('', '0', null), item, 0, Unit('')));
-      quantityController.add(TextEditingController());
+      this.listOfMineralItemObj.add(MineralItemWithObj(
+          Mineral('', '0', null), item, 0, Unit(''), 0, Unit('')));
+      mineralQuantityController.add(TextEditingController());
+      itemQuantityController.add(TextEditingController());
       selectedMinerals.add(null);
-      selectedUnits.add(null);
+      selectedMineralUnits.add(null);
+      selectedItemUnits.add(null);
     });
   }
 
@@ -250,24 +388,38 @@ class _AddMineralItemState extends State<AddMineralItem> {
       _showAlertDialog('Status', 'Mineral Deleted Successfully');
       setState(() {
         listOfMineralItemObj.removeAt(position);
-        quantityController.removeAt(position);
+        mineralQuantityController.removeAt(position);
         selectedMinerals.removeAt(position);
-        selectedUnits.removeAt(position);
+        selectedItemUnits.removeAt(position);
+        selectedMineralUnits.removeAt(position);
       });
     }
   }
 
-  void updateQuantity(int position) {
-    listOfMineralItemObj[position].quantity =
-        int.parse(quantityController[position].text);
+  void updateMineralQuantity(int position) {
+    listOfMineralItemObj[position].mineralQuantity =
+        int.parse(mineralQuantityController[position].text);
   }
 
-  void updateSelectedUnit(String valueSelected, position) {
+  void updateItemQuantity(int position) {
+    listOfMineralItemObj[position].itemQuantity =
+        int.parse(itemQuantityController[position].text);
+  }
+
+  void updateSelectedMineralUnit(String valueSelected, position) {
     Unit unit =
         unitList.firstWhere((unit) => unit.name == valueSelected, orElse: null);
     // mineral.unitId = unit.id;
-    this.selectedUnits[position] = valueSelected;
-    this.listOfMineralItemObj[position].unit = unit;
+    this.selectedMineralUnits[position] = valueSelected;
+    this.listOfMineralItemObj[position].mineralUnit = unit;
+  }
+
+  void updateSelectedItemUnit(String valueSelected, position) {
+    Unit unit =
+        unitList.firstWhere((unit) => unit.name == valueSelected, orElse: null);
+    // mineral.unitId = unit.id;
+    this.selectedItemUnits[position] = valueSelected;
+    this.listOfMineralItemObj[position].itemUnit = unit;
   }
 
   void updateSelectedMineral(String valueSelected, position) {

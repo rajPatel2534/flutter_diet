@@ -6,18 +6,22 @@ class MineralItemWithObj {
   int _id;
   Mineral _mineral;
   Item _item;
-  int _quantity;
-  Unit _unit;
+  int _itemQuantity;
+  Unit _itemUnit;
+  int _mineralQuantity;
+  Unit _mineralUnit;
 
-    MineralItemWithObj.withId(this._id,this._mineral,this._item,this._quantity,this._unit);
+  MineralItemWithObj.withId(this._id,this._mineral,this._item,this._itemQuantity,this._itemUnit,this._mineralQuantity,this._mineralUnit);
 
-  MineralItemWithObj(this._mineral,this._item,this._quantity,this._unit);
+  MineralItemWithObj(this._mineral,this._item,this._itemQuantity,this._itemUnit,this._mineralQuantity,this._mineralUnit);
   
   int get id => _id;
   Mineral get mineral => _mineral;
   Item get item => _item;
-  Unit get unit => _unit;
-  int get quantity => _quantity;
+  Unit get itemUnit => _itemUnit;
+  int get itemQuantity => _itemQuantity;
+  Unit get mineralUnit => _mineralUnit;
+  int get mineralQuantity => _mineralQuantity;
 
   set mineral(Mineral mineral){
     this._mineral = mineral;
@@ -27,12 +31,20 @@ class MineralItemWithObj {
     this._item = item;
   }
 
-  set unit(Unit unit){
-    this._unit = unit;
+  set itemUnit(Unit itemUnit){
+    this._itemUnit = itemUnit;
   }
 
-  set quantity(int quantity){
-    this._quantity = quantity;
+  set itemQuantity(int itemQuantity){
+    this._itemQuantity = itemQuantity;
+  }
+
+  set mineralUnit(Unit mineralUnit){
+    this._mineralUnit = mineralUnit;
+  }
+
+  set mineralQuantity(int mineralQuantity){
+    this._mineralQuantity = mineralQuantity;
   }
   
   }

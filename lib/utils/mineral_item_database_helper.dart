@@ -17,10 +17,12 @@ class MineralItemDatabaseHelper{
   DatabaseHelper _databaseHelper = DatabaseHelper();
   String mineralItemTable = 'mineral_item';
   String mineralItemId = 'mineral_item_id';
-  String mineralItemUnitId = 'unit_id';
+  String mineralItemItemUnitId = 'item_unit_id';
+  String mineralItemMineralUnitId = 'mineral_unit_id';
   String mineralItemMineralId = 'mineral_id';
   String mineralItemItemId = 'item_id';
-  String mineralItemMineralQuantity = 'quantity';
+  String mineralItemMineralQuantity = 'mineral_quantity';
+  String mineralItemItemQuantity = 'item_quantity';
 
  MineralItemDatabaseHelper._createInstance();
 
@@ -87,8 +89,10 @@ factory MineralItemDatabaseHelper(){
             listOfMineralItem[i].id,
             await mineralItemDatabaseHelper.getMineral(listOfMineralItem[i].mineralId),
             await itemDatabaseHelper.getItem(listOfMineralItem[i].itemId),
-            listOfMineralItem[i].quantity,
-            await unitDatabaseHelper.getUnit(listOfMineralItem[i].unitId)
+            listOfMineralItem[i].itemQuantity,
+            await unitDatabaseHelper.getUnit(listOfMineralItem[i].itemUnitId),
+            listOfMineralItem[i].mineralQuantity,
+            await unitDatabaseHelper.getUnit(listOfMineralItem[i].mineralUnitId)
 
           ));
     }
@@ -98,11 +102,11 @@ factory MineralItemDatabaseHelper(){
   saveMineralItemObj(MineralItemWithObj mineralItemWithObj){
     if(mineralItemWithObj != null){
         updateNote(MineralItem.withId(mineralItemWithObj.id,mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
-        mineralItemWithObj.quantity,mineralItemWithObj.unit.id));
+        mineralItemWithObj.itemQuantity,mineralItemWithObj.itemUnit.id,mineralItemWithObj.mineralQuantity,mineralItemWithObj.mineralUnit.id));
     }
     else{
        insertNote(MineralItem(mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
-        mineralItemWithObj.quantity,mineralItemWithObj.unit.id));
+       mineralItemWithObj.itemQuantity,mineralItemWithObj.itemUnit.id,mineralItemWithObj.mineralQuantity,mineralItemWithObj.mineralUnit.id));
     }
   }
   saveMineralItemObjList(List<MineralItemWithObj> mineralItemWithObj){
@@ -112,11 +116,11 @@ factory MineralItemDatabaseHelper(){
       if(mineralItemWithObj[i].id != null){
         debugPrint('update');
       updateNote(MineralItem.withId(mineralItemWithObj[i].id,mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
-        mineralItemWithObj[i].quantity,mineralItemWithObj[i].unit.id));  
+        mineralItemWithObj[i].itemQuantity,mineralItemWithObj[i].itemUnit.id,mineralItemWithObj[i].mineralQuantity,mineralItemWithObj[i].mineralUnit.id));  
       } 
       else{
       insertNote(MineralItem(mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
-        mineralItemWithObj[i].quantity,mineralItemWithObj[i].unit.id));
+        mineralItemWithObj[i].itemQuantity,mineralItemWithObj[i].itemUnit.id,mineralItemWithObj[i].mineralQuantity,mineralItemWithObj[i].mineralUnit.id));
       }
     }
   }

@@ -37,11 +37,12 @@ class DatabaseHelper{
   //Mineral Item Table
   String mineralItemTable = 'mineral_item';
   String mineralItemId = 'mineral_item_id';
-  String mineralItemUnitId = 'unit_id';
+  String mineralItemItemUnitId = 'item_unit_id';
+  String mineralItemMineralUnitId = 'mineral_unit_id';
   String mineralItemMineralId = 'mineral_id';
   String mineralItemItemId = 'item_id';
-  String mineralItemMineralQuantity = 'quantity';
-
+  String mineralItemMineralQuantity = 'mineral_quantity';
+  String mineralItemItemQuantity = 'item_quantity';
 
   DatabaseHelper._createInstance();
   factory DatabaseHelper(){
@@ -81,9 +82,11 @@ class DatabaseHelper{
 
    await db.execute('CREATE TABLE $mineralItemTable('
       '$mineralItemId INTEGER PRIMARY KEY AUTOINCREMENT,$mineralItemItemId INTEGER,'
-         '$mineralItemMineralId INTEGER,$mineralItemMineralQuantity INTEGER,$mineralItemUnitId INTEGER,'
+         '$mineralItemMineralId INTEGER,$mineralItemItemQuantity INTEGER,$mineralItemItemUnitId INTEGER,'
+         '$mineralItemMineralQuantity INTEGER,$mineralItemMineralUnitId INTEGER,'
         'FOREIGN KEY($mineralItemMineralId) REFERENCES $mineralTable($mineralId),'
-        'FOREIGN KEY($mineralItemUnitId) REFERENCES $unitTable($unitId),'
+        'FOREIGN KEY($mineralItemItemUnitId) REFERENCES $unitTable($unitId),'
+        'FOREIGN KEY($mineralItemMineralUnitId) REFERENCES $unitTable($unitId),'
         'FOREIGN KEY($mineralItemItemId) REFERENCES $itemTable($itemId))');    
   }
 
