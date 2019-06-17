@@ -1,6 +1,3 @@
-
-
-import 'package:flutter/rendering.dart';
 import 'package:login_demo/models/item.dart';
 import 'package:login_demo/utils/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,25 +22,25 @@ factory ItemDatabaseHelper(){
 
 
 
-  Future<List<Map<String, dynamic>>> getNoteListMap() async{
+  Future<List<Map<String, dynamic>>> getItemListMap() async{
     Database db = await _databaseHelper.database;
     var result = await db.query(itemTable,orderBy: '$itemId ASC');
     return result;
   }
 
-  Future<int> insertNote(Item note) async{
+  Future<int> insertItem(Item item) async{
       Database db = await _databaseHelper.database;;
-      var result = await db.insert(itemTable, note.toMap());
+      var result = await db.insert(itemTable, item.toMap());
       return result;
   }
 
-  Future<int> updateNote(Item note) async{
+  Future<int> updateItem(Item item) async{
       Database db = await _databaseHelper.database;;
-      var result = await db.update(itemTable, note.toMap(),where: '$itemId = ?', whereArgs: [note.id]);
+      var result = await db.update(itemTable, item.toMap(),where: '$itemId = ?', whereArgs: [item.id]);
       return result;
   }
 
-    Future<int> deleteNote(int id) async{
+    Future<int> deleteItem(int id) async{
       Database db = await _databaseHelper.database;;
       var result = await db.rawDelete('DELETE FROM $itemTable WHERE $itemId = $id');
       return result;
@@ -51,9 +48,9 @@ factory ItemDatabaseHelper(){
 
   Future<int> getCount(int id) async{
       Database db = await _databaseHelper.database;;
-      List<Map<String, dynamic>> notes = await db.rawQuery("SELECT COUNT (*) FROM $itemTable");
-      int notesLength = Sqflite.firstIntValue(notes);
-      return notesLength;
+      List<Map<String, dynamic>> items = await db.rawQuery("SELECT COUNT (*) FROM $itemTable");
+      int itemsLength = Sqflite.firstIntValue(items);
+      return itemsLength;
   }
 
   Future<Item> getItem(int id) async{
@@ -62,15 +59,15 @@ factory ItemDatabaseHelper(){
    return Item.fromMapObject(mineral[0]);
   }
 
-  Future<List<Item>> getNoteList() async{
-    var noteMapList = await getNoteListMap();
-    int count = noteMapList.length;
-    List<Item> noteList = List<Item>();
+  Future<List<Item>> getItemList() async{
+    var itemMapList = await getItemListMap();
+    int count = itemMapList.length;
+    List<Item> itemList = List<Item>();
 
     for(int i=0;i< count ;i++){
-      noteList.add(Item.fromMapObject(noteMapList[i]));
+      itemList.add(Item.fromMapObject(itemMapList[i]));
     }
     
-    return noteList;
+    return itemList;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:login_demo/screens/home_page/home_page.dart';
+import 'package:login_demo/utils/color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginUI extends StatefulWidget {
@@ -17,15 +18,16 @@ class _LoginPageState extends State<LoginUI>
     with SingleTickerProviderStateMixin {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
+  Color themeColor = ColorHelper.themeColor;
   @override
   Widget build(BuildContext context) {
     return Center(
         child: Scaffold(
             appBar: AppBar(
               title: Text("Login Demo"),
+              backgroundColor: this.themeColor,
             ),
-            backgroundColor: Colors.blue[100],
+            backgroundColor: Colors.green[100],
             body: Container(
               padding: EdgeInsets.all(20.0),
               child: Column(
@@ -54,39 +56,38 @@ class _LoginPageState extends State<LoginUI>
                         ),
                         // color: Colors.blueAccent,
                         child: Column(children: <Widget>[
-                          TextField(
-                            controller: emailController,
-                            decoration: InputDecoration(
-                              // border: InputBorder.none,
-                              // hintText: 'Enter Email',
-                              labelText: 'Enter Email',
-                              icon: Icon(Icons.email),
-                            ),
-                          ),
-                          TextField(
-                            controller: passwordController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              // border: InputBorder.none,
-                              // hintText: 'Enter Password',
-                              labelText: 'Enter Password',
-                              icon: Icon(Icons.vpn_key),
-                            ),
-                          ),
+                          Theme(
+                              data: ThemeData(primaryColor: this.themeColor),
+                              child: TextField(
+                                controller: emailController,
+                                decoration: InputDecoration(
+                                  labelText: 'Enter Email',
+                                  icon: Icon(Icons.email),
+                                ),
+                              )),
+                          Theme(
+                              data: ThemeData(primaryColor: this.themeColor),
+                              child: TextField(
+                                  controller: passwordController,
+                                  obscureText: true,
+                                  decoration: InputDecoration(
+                                    labelText: 'Enter Password',
+                                    icon: Icon(Icons.vpn_key),
+                                  ))),
                           Container(
                               margin: EdgeInsets.only(top: 10.0),
                               child: RaisedButton(
-                                color: Colors.blueAccent,
+                                color: this.themeColor,
                                 textColor: Colors.white,
                                 child: Text("Sign In"),
-                                onPressed: () {                                 
+                                onPressed: () {
                                   checkLoginCredentials(emailController.text,
                                       passwordController.text, context);
                                 },
                               )),
                           RaisedButton(
                             padding: EdgeInsets.all(0.0),
-                            color: Colors.blueAccent,
+                            color: this.themeColor,
                             textColor: Colors.white,
                             child: Text("Sign Up"),
                             onPressed: () {
@@ -98,26 +99,22 @@ class _LoginPageState extends State<LoginUI>
             )));
   }
 
-  void checkLoginCredentials(String email, String password, BuildContext context) {
+  void checkLoginCredentials(
+      String email, String password, BuildContext context) {
     if (email == "raj" && password == "raj") {
       saveLoginDetails();
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
           ModalRoute.withName("/home"));
-    }
-    else{
-        showDialog(
-                                    context: context,
-                                    builder: (context)
-                                    {
-                                      return AlertDialog(
-                                        content: Text(
-                                          "Invalid Username Or Password !!!"
-                                          ),
-                                      );
-                                    }
-                                  );
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text("Invalid Username Or Password !!!"),
+            );
+          });
     }
   }
 

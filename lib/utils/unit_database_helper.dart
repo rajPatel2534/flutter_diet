@@ -22,25 +22,25 @@ factory UnitDatabaseHelper(){
 
 
 
-  Future<List<Map<String, dynamic>>> getNoteListMap() async{
+  Future<List<Map<String, dynamic>>> getUnitListMap() async{
     Database db = await _databaseHelper.database;
     var result = await db.query(unitTable,orderBy: '$unitId ASC');
     return result;
   }
 
-  Future<int> insertNote(Unit note) async{
+  Future<int> insertUnit(Unit unit) async{
       Database db = await _databaseHelper.database;;
-      var result = await db.insert(unitTable, note.toMap());
+      var result = await db.insert(unitTable, unit.toMap());
       return result;
   }
 
-  Future<int> updateNote(Unit note) async{
+  Future<int> updateUnit(Unit unit) async{
       Database db = await _databaseHelper.database;;
-      var result = await db.update(unitTable, note.toMap(),where: '$unitId = ?', whereArgs: [note.id]);
+      var result = await db.update(unitTable, unit.toMap(),where: '$unitId = ?', whereArgs: [unit.id]);
       return result;
   }
 
-    Future<int> deleteNote(int id) async{
+    Future<int> deleteUnit(int id) async{
       Database db = await _databaseHelper.database;;
       var result = await db.rawDelete('DELETE FROM $unitTable WHERE $unitId = $id');
       return result;
@@ -48,9 +48,9 @@ factory UnitDatabaseHelper(){
 
   Future<int> getCount(int id) async{
       Database db = await _databaseHelper.database;;
-      List<Map<String, dynamic>> notes = await db.rawQuery("SELECT COUNT (*) FROM $unitTable");
-      int notesLength = Sqflite.firstIntValue(notes);
-      return notesLength;
+      List<Map<String, dynamic>> units = await db.rawQuery("SELECT COUNT (*) FROM $unitTable");
+      int unitsLength = Sqflite.firstIntValue(units);
+      return unitsLength;
   }
 
   Future<Unit> getUnit(int id) async{
@@ -59,15 +59,15 @@ factory UnitDatabaseHelper(){
    return Unit.fromMapObject(units[0]);
   }
 
-  Future<List<Unit>> getNoteList() async{
-    var noteMapList = await getNoteListMap();
-    int count = noteMapList.length;
-    List<Unit> noteList = List<Unit>();
+  Future<List<Unit>> getUnitList() async{
+    var unitMapList = await getUnitListMap();
+    int count = unitMapList.length;
+    List<Unit> unitList = List<Unit>();
 
     for(int i=0;i< count ;i++){
-      noteList.add(Unit.fromMapObject(noteMapList[i]));
+      unitList.add(Unit.fromMapObject(unitMapList[i]));
     }
     
-    return noteList;
+    return unitList;
   }
 }

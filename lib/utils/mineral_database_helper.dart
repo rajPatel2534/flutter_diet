@@ -26,25 +26,25 @@ factory MineralDatabaseHelper(){
 
 
 
-  Future<List<Map<String, dynamic>>> getNoteListMap() async{
+  Future<List<Map<String, dynamic>>> getMineralListMap() async{
     Database db = await _databaseHelper.database;
     var result = await db.query(mineralTable,orderBy: '$mineralId ASC');
     return result;
   }
 
-  Future<int> insertNote(Mineral note) async{
+  Future<int> insertMineral(Mineral mineral) async{
       Database db = await _databaseHelper.database;;
-      var result = await db.insert(mineralTable, note.toMap());
+      var result = await db.insert(mineralTable, mineral.toMap());
       return result;
   }
 
-  Future<int> updateNote(Mineral note) async{
+  Future<int> updateMineral(Mineral mineral) async{
       Database db = await _databaseHelper.database;;
-      var result = await db.update(mineralTable, note.toMap(),where: '$mineralId = ?', whereArgs: [note.id]);
+      var result = await db.update(mineralTable, mineral.toMap(),where: '$mineralId = ?', whereArgs: [mineral.id]);
       return result;
   }
 
-    Future<int> deleteNote(int id) async{
+    Future<int> deleteMineral(int id) async{
       Database db = await _databaseHelper.database;;
       var result = await db.rawDelete('DELETE FROM $mineralTable WHERE $mineralId = $id');
       return result;
@@ -52,9 +52,9 @@ factory MineralDatabaseHelper(){
 
   Future<int> getCount(int id) async{
       Database db = await _databaseHelper.database;;
-      List<Map<String, dynamic>> notes = await db.rawQuery("SELECT COUNT (*) FROM $mineralTable");
-      int notesLength = Sqflite.firstIntValue(notes);
-      return notesLength;
+      List<Map<String, dynamic>> minerals = await db.rawQuery("SELECT COUNT (*) FROM $mineralTable");
+      int mineralsLength = Sqflite.firstIntValue(minerals);
+      return mineralsLength;
   }
 
   Future<Mineral> getMineral(int id) async{
@@ -63,15 +63,15 @@ factory MineralDatabaseHelper(){
    return Mineral.fromMapObject(mineral[0]);
   }
 
-  Future<List<Mineral>> getNoteList() async{
-    var noteMapList = await getNoteListMap();
-    int count = noteMapList.length;
-    List<Mineral> noteList = List<Mineral>();
+  Future<List<Mineral>> getMineralList() async{
+    var mineralMapList = await getMineralListMap();
+    int count = mineralMapList.length;
+    List<Mineral> mineralList = List<Mineral>();
 
     for(int i=0;i< count ;i++){
-      noteList.add(Mineral.fromMapObject(noteMapList[i]));
+      mineralList.add(Mineral.fromMapObject(mineralMapList[i]));
     }
     
-    return noteList;
+    return mineralList;
   }
 }

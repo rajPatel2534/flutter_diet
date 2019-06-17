@@ -36,27 +36,27 @@ factory MineralItemDatabaseHelper(){
 
 
 
-  Future<List<Map<String, dynamic>>> getNoteListMap(int itemId) async{
+  Future<List<Map<String, dynamic>>> getMineralItemListMap(int itemId) async{
     Database db = await _databaseHelper.database;
     var result = await db.rawQuery("SELECT * FROM $mineralItemTable WHERE $mineralItemItemId == $itemId ORDER BY $mineralItemId");
     return result;
   }
 
-  Future<int> insertNote(MineralItem note) async{
+  Future<int> insertMineralItem(MineralItem mineralItem) async{
       Database db = await _databaseHelper.database;
-      var result = await db.insert(mineralItemTable, note.toMap());
+      var result = await db.insert(mineralItemTable, mineralItem.toMap());
       return result;
   }
 
-  Future<int> updateNote(MineralItem note) async{
+  Future<int> updateMineralItem(MineralItem mineralItem) async{
       Database db = await _databaseHelper.database;
-      debugPrint('${note.toMap()}');
-      var result = await db.update(mineralItemTable, note.toMap(),where: '$mineralItemId = ?', whereArgs: [note.id]);
+      debugPrint('${mineralItem.toMap()}');
+      var result = await db.update(mineralItemTable, mineralItem.toMap(),where: '$mineralItemId = ?', whereArgs: [mineralItem.id]);
       debugPrint('$result');
       return result;
   }
 
-    Future<int> deleteNote(int id) async{
+    Future<int> deleteMineralItem(int id) async{
       Database db = await _databaseHelper.database;
       var result = await db.rawDelete('DELETE FROM $mineralItemTable WHERE $mineralItemId = $id');
       return result;
@@ -64,25 +64,25 @@ factory MineralItemDatabaseHelper(){
 
   Future<int> getCount(int id) async{
       Database db = await _databaseHelper.database;;
-      List<Map<String, dynamic>> notes = await db.rawQuery("SELECT COUNT (*) FROM $mineralItemTable");
-      int notesLength = Sqflite.firstIntValue(notes);
-      return notesLength;
+      List<Map<String, dynamic>> mineralItems = await db.rawQuery("SELECT COUNT (*) FROM $mineralItemTable");
+      int mineralItemsLength = Sqflite.firstIntValue(mineralItems);
+      return mineralItemsLength;
   }
 
-  Future<List<MineralItem>> getNoteList(int itemId) async{
-    var noteMapList = await getNoteListMap(itemId);
-    int count = noteMapList.length;
-    List<MineralItem> noteList = List<MineralItem>();
+  Future<List<MineralItem>> getMineralItemList(int itemId) async{
+    var mineralItemMapList = await getMineralItemListMap(itemId);
+    int count = mineralItemMapList.length;
+    List<MineralItem> mineralItemList = List<MineralItem>();
 
     for(int i=0;i< count ;i++){
-      noteList.add(MineralItem.fromMapObject(noteMapList[i]));
+      mineralItemList.add(MineralItem.fromMapObject(mineralItemMapList[i]));
     }
     
-    return noteList;
+    return mineralItemList;
   }
 
   Future<List<MineralItemWithObj>> getMineralItemListWithObj(int itemId) async{
-    List<MineralItem> listOfMineralItem = await getNoteList(itemId);  
+    List<MineralItem> listOfMineralItem = await getMineralItemList(itemId);  
     List<MineralItemWithObj> listOfMineralItemWithObj = List<MineralItemWithObj>();
     for(int i=0;i<listOfMineralItem.length ; i++){
           listOfMineralItemWithObj.add(MineralItemWithObj.withId(
@@ -101,11 +101,11 @@ factory MineralItemDatabaseHelper(){
 
   saveMineralItemObj(MineralItemWithObj mineralItemWithObj){
     if(mineralItemWithObj != null){
-        updateNote(MineralItem.withId(mineralItemWithObj.id,mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
+        updateMineralItem(MineralItem.withId(mineralItemWithObj.id,mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
         mineralItemWithObj.itemQuantity,mineralItemWithObj.itemUnit.id,mineralItemWithObj.mineralQuantity,mineralItemWithObj.mineralUnit.id));
     }
     else{
-       insertNote(MineralItem(mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
+       insertMineralItem(MineralItem(mineralItemWithObj.mineral.id,mineralItemWithObj.item.id,
        mineralItemWithObj.itemQuantity,mineralItemWithObj.itemUnit.id,mineralItemWithObj.mineralQuantity,mineralItemWithObj.mineralUnit.id));
     }
   }
@@ -115,11 +115,11 @@ factory MineralItemDatabaseHelper(){
     {
       if(mineralItemWithObj[i].id != null){
         debugPrint('update');
-      updateNote(MineralItem.withId(mineralItemWithObj[i].id,mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
+      updateMineralItem(MineralItem.withId(mineralItemWithObj[i].id,mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
         mineralItemWithObj[i].itemQuantity,mineralItemWithObj[i].itemUnit.id,mineralItemWithObj[i].mineralQuantity,mineralItemWithObj[i].mineralUnit.id));  
       } 
       else{
-      insertNote(MineralItem(mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
+      insertMineralItem(MineralItem(mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
         mineralItemWithObj[i].itemQuantity,mineralItemWithObj[i].itemUnit.id,mineralItemWithObj[i].mineralQuantity,mineralItemWithObj[i].mineralUnit.id));
       }
     }
