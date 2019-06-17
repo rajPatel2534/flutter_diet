@@ -26,6 +26,7 @@ class _AddMineralState extends State<AddMineral> {
   UnitDatabaseHelper unitDatabaseHelper = UnitDatabaseHelper();
   String selected;
   Color themeColor = ColorHelper.themeColor;
+  bool isDataLoading = true;
 
   _AddMineralState(this.mineral, this.title) {
     getUnitList();
@@ -86,7 +87,13 @@ class _AddMineralState extends State<AddMineral> {
                     width: 5.0,
                   ),
                   Expanded(
-                    child: DropdownButton(
+                    child: (isDataLoading == true)
+        ? Center(
+            child: CircularProgressIndicator(
+              // backgroundColor: Colors.red,
+              valueColor: AlwaysStoppedAnimation<Color>(ColorHelper.themeColor),
+            ),
+          ) :DropdownButton(
                       items: unitList.map((dropDownItem) {
                         return DropdownMenuItem<String>(
                           value: dropDownItem.name,
@@ -97,8 +104,6 @@ class _AddMineralState extends State<AddMineral> {
                       value: selected,
                       onChanged: (valueSelected) {
                         setState(() {
-                          debugPrint('$valueSelected selected');
-                          // updatePriorityAsInt(valueSelected);
                           updateSelectedUnit(valueSelected);
                         });
                       },
@@ -153,9 +158,9 @@ class _AddMineralState extends State<AddMineral> {
     Future<List<Unit>> itemListFuture = unitDatabaseHelper.getUnitList();
     itemListFuture.then((itemList) {
       setState(() {
-        debugPrint('${itemList[0].id}');
         this.unitList = itemList;
         this.selected = getUnitById(mineral.unitId);
+        this.isDataLoading = false;
         // this.count = itemList.length;
       });
     });

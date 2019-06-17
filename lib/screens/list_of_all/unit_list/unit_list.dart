@@ -18,6 +18,7 @@ class UnitListState extends State<UnitList> {
   UnitDatabaseHelper unitDatabaseHelper = UnitDatabaseHelper();
   List<Unit> unitList;
   int count = 0;
+  bool isDataLoading = true;
   var addThings = ['Item', 'Mineral', 'Unit'];
   Color themeColor = ColorHelper.themeColor;
 
@@ -27,7 +28,12 @@ class UnitListState extends State<UnitList> {
       unitList = List<Unit>();
       updateListView();
     }
-    return Container(child: getUnitListView());
+    return (isDataLoading == true)
+        ? Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(ColorHelper.themeColor),
+            ),
+          ):Container(child: getUnitListView());
   }
 
   ListView getUnitListView() {
@@ -49,9 +55,6 @@ class UnitListState extends State<UnitList> {
               this.unitList[position].name,
               style: textStyle,
             ),
-            // subtitle: Text(
-            //   this.unitList[position].description
-            // ),
             trailing: GestureDetector(
                 onTap: () {
                   _delete(context, unitList[position]);
@@ -114,11 +117,15 @@ class UnitListState extends State<UnitList> {
   }
 
   void updateListView() {
+    setState(() {
+     isDataLoading = true; 
+    });
     Future<List<Unit>> unitListFuture = unitDatabaseHelper.getUnitList();
     unitListFuture.then((unitList) {
       setState(() {
         this.unitList = unitList;
         this.count = unitList.length;
+        this.isDataLoading = false;
       });
     });
   }

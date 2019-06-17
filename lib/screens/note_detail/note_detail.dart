@@ -61,7 +61,6 @@ class _NoteDetailState extends State<NoteDetail>{
             value: priorityAsString(note.priority),
             onChanged: (valueSelected){
               setState(() {
-                debugPrint('$valueSelected selected');
                 updatePriorityAsInt(valueSelected);
               });
             },

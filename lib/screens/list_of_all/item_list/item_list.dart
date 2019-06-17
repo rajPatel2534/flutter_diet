@@ -25,13 +25,13 @@ class _ItemWithMineralDetail {
 }
 
 class ItemListState extends State<ItemList>
-    with SingleTickerProviderStateMixin {
+  with SingleTickerProviderStateMixin {
   ItemDatabaseHelper itemDatabaseHelper = ItemDatabaseHelper();
   MineralItemDatabaseHelper mineralItemDatabaseHelper =
-      MineralItemDatabaseHelper();
+  MineralItemDatabaseHelper();
   List<Item> itemList;
   List<_ItemWithMineralDetail> itemListWithMinerals =
-      List<_ItemWithMineralDetail>();
+  List<_ItemWithMineralDetail>();
   int count = 0;
   var addThings = ['Item', 'Mineral', 'Item'];
   List<bool> detailOpenList = List<bool>();
@@ -47,7 +47,6 @@ class ItemListState extends State<ItemList>
     return (isDataLoading == true)
         ? Center(
             child: CircularProgressIndicator(
-              // backgroundColor: Colors.red,
               valueColor: AlwaysStoppedAnimation<Color>(ColorHelper.themeColor),
             ),
           )
@@ -55,7 +54,6 @@ class ItemListState extends State<ItemList>
   }
 
   ListView getItemListView() {
-    TextStyle textStyle = Theme.of(context).textTheme.subtitle;
     return ListView.builder(
       shrinkWrap: true,
       physics: ClampingScrollPhysics(),
@@ -69,26 +67,14 @@ class ItemListState extends State<ItemList>
                 backgroundColor: ColorHelper.themeColor,
                 child: Icon(Icons.insert_chart),
               ),
-              // title: Text(
-              //   this.itemList[position].name,
-              //   style: TextStyle(
-              //     fontSize: 18.0,
-              //     fontWeight: FontWeight.w600
-              //   ),
-
-              // ),
               title: Container(
-                  // transform: Matrix4.translationValues(-15.0, 5.0, 0.0),
-
                   child: ExpansionTile(
                 title: GestureDetector(
                   child: Container(
-                    // margin: EdgeInsets.only(left: -10.0),
                     constraints: BoxConstraints(minWidth: double.infinity),
                     child: Text(this.itemList[position].name,
                         style: TextStyle(
                             fontSize: 16.0,
-                            // fontWeight: FontWeight.w600,
                             color: (this.detailOpenList[position] == false)
                                 ? Colors.black
                                 : ColorHelper.themeColor)),
@@ -99,8 +85,6 @@ class ItemListState extends State<ItemList>
                   },
                 ),
                 children: <Widget>[
-                  // Column(
-                  //   children: <Widget>[
                   (this
                               .itemListWithMinerals[position]
                               .listOfMineralItemWithObj
@@ -126,26 +110,7 @@ class ItemListState extends State<ItemList>
                     this.detailOpenList[position] = isExpanded;
                   });
                 },
-              ))
-
-              //              AnimatedSize(
-              //               duration: Duration(milliseconds: 120),
-              //                 vsync: this,
-              // curve: Curves.fastOutSlowIn,
-
-              //               // margin: EdgeInsets.only(top: 5.0),
-              //              child :
-              //   (detailOpenList[position] == false) ?
-              // GestureDetector(
-              // child : Text('Open Details'),
-              // onTap: (){
-              //   setState(() {
-              //   detailOpenList[position]  = true;
-              //   });
-              // },
-              // )
-              // :
-              ,
+              )),
               trailing: GestureDetector(
                   onTap: () {
                     _delete(context, itemList[position]);
@@ -167,19 +132,24 @@ class ItemListState extends State<ItemList>
         itemCount: item.listOfMineralItemWithObj.length,
         itemBuilder: (BuildContext context, int position) {
           return Container(
-              // padding: EdgeInsets.all(2.0),
+              padding: EdgeInsets.only(
+                  right: 3.0, left: 3.0, top: 10.0, bottom: 10.0),
               decoration: BoxDecoration(
-                  border:
-                      Border(top: BorderSide(color: Colors.grey, width: 1.0))),
+                  border: Border(
+                      top: BorderSide(color: Colors.grey[300], width: 1.0))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Expanded(
                       child: Text(
-                          '${item.listOfMineralItemWithObj[position].itemQuantity}')),
+                    '${item.listOfMineralItemWithObj[position].itemQuantity}',
+                    textAlign: TextAlign.center,
+                  )),
                   Expanded(
                     child: Text(
-                        '${item.listOfMineralItemWithObj[position].itemUnit.name}'),
+                      '${item.listOfMineralItemWithObj[position].itemUnit.name}',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   Expanded(
                     child: Text(
@@ -190,7 +160,7 @@ class ItemListState extends State<ItemList>
                   Expanded(
                     child: Text(
                       '${item.listOfMineralItemWithObj[position].mineralQuantity}',
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   Expanded(
@@ -199,14 +169,6 @@ class ItemListState extends State<ItemList>
                       textAlign: TextAlign.center,
                     ),
                   )
-                  // Text('${item.listOfMineralItemWithObj[position].itemUnit.name}')
-                  // ,
-                  //   Text('${item.listOfMineralItemWithObj[position].mineral.name}')
-                  // ,
-
-                  //   Text('${item.listOfMineralItemWithObj[position].mineralQuantity}')
-                  // ,
-                  //  Text('${item.listOfMineralItemWithObj[position].mineralUnit.name}')
                 ],
               ));
         });
@@ -267,10 +229,14 @@ class ItemListState extends State<ItemList>
   }
 
   void updateListView() async {
+    setState(() {
+      this.isDataLoading = true;
+    });
     Future<List<Item>> itemListFuture = itemDatabaseHelper.getItemList();
     itemListFuture.then((itemList) async {
-      // setState(() async {
       this.itemList = itemList;
+      this.itemListWithMinerals.clear();
+      this.detailOpenList.clear();
       this.count = itemList.length;
       for (int i = 0; i < this.count; i++) {
         this.detailOpenList.add(false);

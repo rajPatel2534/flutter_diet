@@ -1,5 +1,3 @@
-import 'package:flutter/widgets.dart';
-import 'package:login_demo/models/item.dart';
 import 'package:login_demo/models/mineral_item.dart';
 import 'package:login_demo/models_with_obj/mineral_item_dto.dart';
 import 'package:login_demo/utils/database_helper.dart';
@@ -50,9 +48,7 @@ factory MineralItemDatabaseHelper(){
 
   Future<int> updateMineralItem(MineralItem mineralItem) async{
       Database db = await _databaseHelper.database;
-      debugPrint('${mineralItem.toMap()}');
       var result = await db.update(mineralItemTable, mineralItem.toMap(),where: '$mineralItemId = ?', whereArgs: [mineralItem.id]);
-      debugPrint('$result');
       return result;
   }
 
@@ -114,7 +110,6 @@ factory MineralItemDatabaseHelper(){
     for(int i=0;i<mineralItemWithObj.length ; i++)
     {
       if(mineralItemWithObj[i].id != null){
-        debugPrint('update');
       updateMineralItem(MineralItem.withId(mineralItemWithObj[i].id,mineralItemWithObj[i].mineral.id,mineralItemWithObj[i].item.id,
         mineralItemWithObj[i].itemQuantity,mineralItemWithObj[i].itemUnit.id,mineralItemWithObj[i].mineralQuantity,mineralItemWithObj[i].mineralUnit.id));  
       } 

@@ -10,7 +10,6 @@ import 'package:login_demo/screens/list_of_all/item_list/item_list.dart';
 import 'package:login_demo/screens/list_of_all/mineral_list/mineral_list.dart';
 import 'package:login_demo/screens/list_of_all/unit_list/unit_list.dart';
 import 'package:login_demo/screens/settings/settings_home/setting_home.dart';
-import 'package:login_demo/screens/settings/theme_color_setting/theme_color_setting.dart';
 import 'package:login_demo/utils/color.dart';
 import 'package:login_demo/utils/database_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,7 +55,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     if (noteList == null) {
       noteList = List<Note>();
-      // updateListView();
     }
 
     return Scaffold(
@@ -79,7 +77,6 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 20.0, fontWeight: FontWeight.w600),
                         ),
                         onPressed: () {
-                          // Navigator.pop(context);
                           logout(context);
                         },
                       )
@@ -91,7 +88,6 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorHelper.themeColor ,
         onPressed: () {
-          //  navigateToNextScreen(Note('','',2), 'Add Note');
           showOptionDialog(context);
         },
         child: Icon(

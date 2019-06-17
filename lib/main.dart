@@ -10,17 +10,7 @@ DatabaseHelper databaseHelper = DatabaseHelper();
 
 Future<void> main() async {
   ColorHelper colorHelper =new  ColorHelper();
-
-  // colorHelper.saveColorIntoSharedPreferences(Colors.green);
-
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //  int colorCode =   prefs.getInt('themeColor');
-  //  debugPrint('${colorCode}');
-  //  debugPrint('${Colors.green}');
-  //  if(colorCode == null){
-  //    colorHelper.themeColor =  Colors.green;
-  //  }
-  //  colorHelper.themeColor = ((colorCode == null)? Colors.green: Color(colorCode) );
   bool isLoggedIn = prefs.getBool('isLoggedIn');
 
     final Future<Database> dbFuture = databaseHelper.initializeDatabase();

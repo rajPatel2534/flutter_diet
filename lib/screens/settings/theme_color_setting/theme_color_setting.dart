@@ -45,7 +45,11 @@ class _ThemeColorSettingState extends State<ThemeColorSetting> {
       Colors.indigo,
       Colors.tealAccent,
       Colors.yellow,
-      Colors.orange
+      Colors.orange,
+      Colors.deepOrange,
+      Colors.cyan,
+      Colors.amber,
+      Colors.lime,
     ];
     count = this.colors.length;
 

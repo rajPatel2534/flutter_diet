@@ -21,6 +21,7 @@ class MineralListState extends State<MineralList> {
   UnitDatabaseHelper unitDatabaseHelper = UnitDatabaseHelper();
   List<Mineral> mineralList;
   int count = 0;
+  bool isDataLoading = true;
   var addThings = ['Mineral', 'Mineral', 'Unit'];
   List<Unit> unitList = List();
   Color themeColor = ColorHelper.themeColor;
@@ -31,7 +32,12 @@ class MineralListState extends State<MineralList> {
       mineralList = List<Mineral>();
       updateListView();
     }
-    return Container(child: getMineralListView());
+    return (isDataLoading == true)
+        ? Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(ColorHelper.themeColor),
+            ),
+          ) : Container(child: getMineralListView());
   }
 
   ListView getMineralListView() {
@@ -117,10 +123,14 @@ class MineralListState extends State<MineralList> {
   }
 
   void updateListView() {
+    setState(() {
+     isDataLoading = true; 
+    });
     Future<List<Unit>> unitListFuture = unitDatabaseHelper.getUnitList();
     unitListFuture.then((unitList) {
       setState(() {
         this.unitList = unitList;
+        this.isDataLoading = false;
       });
     });
 
@@ -137,7 +147,6 @@ class MineralListState extends State<MineralList> {
   String getUnitById(int id) {
     Unit unit =
         unitList.firstWhere((unit) => unit.id == id, orElse: () => null);
-    debugPrint('$unit $id $unitList');
     if (unit != null) return unit.name;
   }
 }

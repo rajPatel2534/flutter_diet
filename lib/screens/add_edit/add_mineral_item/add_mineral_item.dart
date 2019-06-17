@@ -50,13 +50,10 @@ class _AddMineralItemState extends State<AddMineralItem> {
   List<String> selectedItemUnits = List<String>();
   List<String> selectedMinerals = List<String>();
   List<String> selectedMineralUnits = List<String>();
+  bool isDataLoading = true;
 
   @override
   Widget build(BuildContext context) {
-    // mineralDailyIntakeController.text = item.dailyIntake;
-    // mineralNameController.text = mineral.name;
-    TextStyle textStyle = Theme.of(context).textTheme.subhead;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: this.themeColor,
@@ -97,35 +94,15 @@ class _AddMineralItemState extends State<AddMineralItem> {
                           onTap: () {
                             addMineralChild();
                           }),
-
-                      //  GestureDetector(
-                      //   child :Icon(Icons.add_box,
-                      // color: this.themeColor,
-                      // size: 42.0,
-                      // semanticLabel:'Add Mineral',
-
-                      // ),
-                      // onTap: (){
-                      //   debugPrint('called');
-                      //   addMineralChild();
-                      // },
-                      // )
                     ])),
-
-            // Padding(
-            //   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-            //   child: RaisedButton(
-            //     color: this.themeColor,
-            //     textColor: Colors.white,
-            //     onPressed: () {
-            //       addMineralChild();
-            //     },
-            //     child: Text('Add Mineral'),
-            //   ),
-            // ),
             Padding(
               padding: EdgeInsets.only(top: 10.0),
-              child: getMineralsListView(),
+              child:  (isDataLoading == true)
+        ? Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(ColorHelper.themeColor),
+            ),
+          ) : getMineralsListView(),
             ),
             Padding(
               padding: EdgeInsets.only(top: 10.0, bottom: 15.0),
@@ -181,7 +158,6 @@ class _AddMineralItemState extends State<AddMineralItem> {
             color: Colors.white,
             elevation: 2.0,
             child: ListTile(
-              // leading: Text(listOfMineralItemObj[position].mineral.name),
               title: Container(
                   decoration: BoxDecoration(
                       color: Colors.blue[50],
@@ -204,7 +180,6 @@ class _AddMineralItemState extends State<AddMineralItem> {
                                             BorderRadius.circular(5.0))),
                                 controller: itemQuantityController[position],
                                 onChanged: (value) {
-                                  debugPrint('changed');
                                   updateItemQuantity(position);
                                 },
                               ))),
@@ -226,8 +201,6 @@ class _AddMineralItemState extends State<AddMineralItem> {
                             value: selectedItemUnits[position],
                             onChanged: (valueSelected) {
                               setState(() {
-                                debugPrint('$valueSelected selected');
-                                // updatePriorityAsInt(valueSelected);
                                 updateSelectedItemUnit(valueSelected, position);
                               });
                             },
@@ -255,8 +228,6 @@ class _AddMineralItemState extends State<AddMineralItem> {
                         value: selectedMinerals[position],
                         onChanged: (valueSelected) {
                           setState(() {
-                            debugPrint('$valueSelected selected');
-                            // updatePriorityAsInt(valueSelected);
                             updateSelectedMineral(valueSelected, position);
                           });
                         },
@@ -276,7 +247,6 @@ class _AddMineralItemState extends State<AddMineralItem> {
                                   controller:
                                       mineralQuantityController[position],
                                   onChanged: (value) {
-                                    debugPrint('changed');
                                     updateMineralQuantity(position);
                                   },
                                 ))),
@@ -298,8 +268,6 @@ class _AddMineralItemState extends State<AddMineralItem> {
                               value: selectedMineralUnits[position],
                               onChanged: (valueSelected) {
                                 setState(() {
-                                  debugPrint('$valueSelected selected');
-                                  // updatePriorityAsInt(valueSelected);
                                   updateSelectedMineralUnit(
                                       valueSelected, position);
                                 });
@@ -348,7 +316,6 @@ class _AddMineralItemState extends State<AddMineralItem> {
   }
 
   void getListOfMineralItemWithObj() {
-    debugPrint('called');
     Future<List<MineralItemWithObj>> mineralListFuture =
         mineralItemDatabaseHelper.getMineralItemListWithObj(item.id);
     mineralListFuture.then((mineralListFuture) {
@@ -365,6 +332,7 @@ class _AddMineralItemState extends State<AddMineralItem> {
               .add('${listOfMineralItemObj[i].mineralUnit.name}');
           selectedItemUnits.add('${listOfMineralItemObj[i].itemUnit.name}');
         }
+         isDataLoading = false;
       });
     });
   }
